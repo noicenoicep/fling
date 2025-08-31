@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Catch Challenge</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            transition: background-color 0.5s;
+        }
+        
+        body.storm-theme {
+            background-color: #2a2a2a;
+            color: white;
+        }
+        
+        #header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        #game-area {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 800px;
+            gap: 20px;
+        }
+        
+        #game-container {
+            height: 400px;
+            position: relative;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        body.storm-theme #game-container {
+            background-color: #333;
+        }
+        
+        #haha-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            position: absolute;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            background-color: #4CAF50;
+        }
+        
+        .blue-skin {
+            background: linear-gradient(to bottom, #2196F3, #1976D2);
+        }
+        
+        .purple-skin {
+            background: linear-gradient(to bottom, #9C27B0, #7B1FA2);
+        }
+        
+        .gold-skin {
+            background: linear-gradient(to bottom, #FFC107, #FF9800);
+        }
+        
+        .legendary-skin {
+            background: linear-gradient(to bottom, #FF5722, #F44336);
+            animation: aura 2s infinite alternate;
+        }
+        
+        .sun-skin {
+            background: linear-gradient(to bottom, #FF8C00, #FFD700);
+        }
+        
+        .contamination-skin {
+            background: linear-gradient(to bottom, #00FF7F, #1E90FF);
+        }
+        
+        .spiral-button {
+            background: linear-gradient(to bottom, #FF1493, #9400D3);
+            animation: spin 1s linear infinite;
+            border-radius: 10px;
+        }
+        
+        .tornado-skin {
+            background-image: url('https://codehs.com/uploads/cf6d4e7bcaf40ffe9e6039c7e717d74e');
+            background-size: cover;
+            color: black;
+            font-weight: bold;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes aura {
+            0% { box-shadow: 0 0 10px #FFC107; }
+            100% { box-shadow: 0 0 20px #FF5722, 0 0 30px #F44336; }
+        }
+        
+        @keyframes lightning {
+            0% { opacity: 0; }
+            1% { opacity: 1; background-color: white; }
+            2% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+        
+        .lightning {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: lightning 1.5s infinite;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .taunt-message {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        
+        .taunt-message.visible {
+            opacity: 1;
+        }
+        
+        #stats-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.storm-theme #stats-container {
+            background-color: #333;
+            color: white;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 0 10px;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        #save-section {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        body.storm-theme #save-section {
+            background-color: #333;
+            color: white;
+        }
+        
+        #save-code-display {
+            font-family: monospace;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        
+        body.storm-theme #save-code-display {
+            background-color: #555;
+            color: white;
+        }
+        
+        #shop-section {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        body.storm-theme #shop-section {
+            background-color: #333;
+            color: white;
+        }
+        
+        .shop-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        body.storm-theme .shop-item {
+            border-bottom: 1px solid #555;
+        }
+        
+        .shop-item:last-child {
+            border-bottom: none;
+        }
+        
+        .skin-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        
+        .skin-info {
+            flex: 1;
+        }
+        
+        .skin-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .skin-requirements {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        body.storm-theme .skin-requirements {
+            color: #aaa;
+        }
+        
+        .skin-status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        
+        .unlocked {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .locked {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .equip-btn {
+            padding: 5px 10px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .equip-btn:hover {
+            background-color: #1976D2;
+        }
+        
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        #theme-toggle {
+            background-color: #2196F3;
+        }
+        
+        #theme-toggle:hover {
+            background-color: #1976D2;
+        }
+        
+        #touch-warning {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            text-align: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+        
+        #shop-toggle {
+            margin-top: 10px;
+        }
+        
+        .multiplier-display {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 5px #000;
+            z-index: 10;
+            pointer-events: none;
+            animation: float-up 1s forwards;
+        }
+        
+        @keyframes float-up {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>Button Catch Challenge</h1>
+        <p>Catch the button to unlock new skins!</p>
+        <p><a href="https://portal-13-14068161.codehs.me/index.html">Go back</a></p>
+    </div>
+    
+    <div id="game-area">
+        <div id="stats-container">
+            <div class="stat-box">
+                <div>Total Catches</div>
+                <div class="stat-value" id="total-catches">0</div>
+            </div>
+            <div class="stat-box">
+                <div>Current Session</div>
+                <div class="stat-value" id="session-catches">0</div>
+            </div>
+            <div class="stat-box">
+                <div>High Score</div>
+                <div class="stat-value" id="high-score">0</div>
+            </div>
+            <div class="stat-box">
+                <div>Multiplier</div>
+                <div class="stat-value" id="multiplier">1x</div>
+            </div>
+        </div>
+        
+        <div id="game-container">
+            <button id="haha-button">CATCH ME!</button>
+        </div>
+        
+        <button id="shop-toggle">Show Skin Shop</button>
+        <button id="theme-toggle" style="display: none;">Toggle Storm Theme</button>
+        <button id="upgrade-toggle">Show Upgrades</button>
+    </div>
+    
+    <div id="shop-section" style="display: none;">
+        <h2>Skin Shop</h2>
+        <div id="shop-items">
+            <!-- Shop items will be added dynamically -->
+        </div>
+    </div>
+    
+    <div id="upgrade-section" style="display: none;">
+        <h2>Upgrades</h2>
+        <div id="upgrade-items">
+            <!-- Upgrade items will be added dynamically -->
+        </div>
+    </div>
+    
+    <div id="save-section">
+        <h3>Save Your Progress</h3>
+        <p>Copy this code to continue on another device:</p>
+        <div id="save-code-display">Generating save code...</div>
+        <button id="copy-button">Copy Code</button>
+        <button id="load-button">Load Progress</button>
+        <input type="text" id="load-input" placeholder="Paste save code here" style="display: none;">
+        <button id="confirm-load" style="display: none;">Confirm Load</button>
+    </div>
+    
+    <div id="touch-warning">
+        <div>
+            <h2>Touchscreen Detected!</h2>
+            <p>This game requires a mouse to play.</p>
+            <p>Please use a computer with a mouse.</p>
+        </div>
+    </div>
+
+    <script>
+        const gameState = {
+            totalCatches: 0,
+            highScore: 0,
+            unlockedSkins: ['default'],
+            currentSkin: 'default',
+            hasSpiralButton: false,
+            stormThemeUnlocked: false,
+            stormThemeActive: false,
+            version: 3,
+            multiplier: 1,
+            unlockedMultipliers: [1],
+            currentMultiplier: 1
+        };
+        
+        const skins = [
+            {
+                id: 'default',
+                name: 'Default Skin',
+                description: 'The classic green button',
+                requirement: 'Always available',
+                previewClass: 'default-skin'
+            },
+            {
+                id: 'blue',
+                name: 'Blue Ocean',
+                description: 'Cool blue gradient',
+                requirement: '15 catches',
+                previewClass: 'blue-skin',
+                requiredCatches: 15
+            },
+            {
+                id: 'purple',
+                name: 'Purple Haze',
+                description: 'Purple gradient and very fire',
+                requirement: '25 catches',
+                previewClass: 'purple-skin',
+                requiredCatches: 25
+            },
+            {
+                id: 'gold',
+                name: 'Golden Aura',
+                description: 'Drippy, aint that right?',
+                requirement: '50 catches',
+                previewClass: 'gold-skin',
+                requiredCatches: 50
+            },
+            {
+                id: 'legendary',
+                name: 'Real one',
+                description: '100 catches is a real one',
+                requirement: '100 catches',
+                previewClass: 'legendary-skin',
+                requiredCatches: 100
+            },
+            {
+                id: 'sun',
+                name: 'The Sun',
+                description: 'Orange-Yellow gradient',
+                requirement: '150 catches',
+                previewClass: 'sun-skin',
+                requiredCatches: 150
+            },
+            {
+                id: 'contamination',
+                name: 'Contamination',
+                description: 'Green-Blue gradient',
+                requirement: '250 catches',
+                previewClass: 'contamination-skin',
+                requiredCatches: 250
+            },
+            {
+                id: 'tornado',
+                name: 'Tornado',
+                description: 'Powerful swirling tornado, also unlocks a storm theme',
+                requirement: '500 catches',
+                previewClass: 'tornado-skin',
+                requiredCatches: 500
+            }
+        ];
+        
+        const multipliers = [
+            {
+                value: 2,
+                name: '2x Multiplier',
+                description: 'Double your catches per click',
+                requirement: '100 catches',
+                requiredCatches: 100,
+                price: 50
+            },
+            {
+                value: 3,
+                name: '3x Multiplier',
+                description: 'Triple your catches per click',
+                requirement: '250 catches',
+                requiredCatches: 250,
+                price: 150
+            },
+            {
+                value: 4,
+                name: '4x Multiplier',
+                description: 'Quadruple your catches per click',
+                requirement: '500 catches',
+                requiredCatches: 500,
+                price: 300
+            },
+            {
+                value: 5,
+                name: '5x Multiplier',
+                description: 'Quintuple your catches per click',
+                requirement: '1000 catches',
+                requiredCatches: 1000,
+                price: 500
+            }
+        ];
+        
+        const button = document.getElementById('haha-button');
+        const gameContainer = document.getElementById('game-container');
+        const touchWarning = document.getElementById('touch-warning');
+        const totalCatchesDisplay = document.getElementById('total-catches');
+        const sessionCatchesDisplay = document.getElementById('session-catches');
+        const highScoreDisplay = document.getElementById('high-score');
+        const multiplierDisplay = document.getElementById('multiplier');
+        const saveCodeDisplay = document.getElementById('save-code-display');
+        const copyButton = document.getElementById('copy-button');
+        const loadButton = document.getElementById('load-button');
+        const loadInput = document.getElementById('load-input');
+        const confirmLoad = document.getElementById('confirm-load');
+        const shopSection = document.getElementById('shop-section');
+        const shopItemsContainer = document.getElementById('shop-items');
+        const shopToggle = document.getElementById('shop-toggle');
+        const themeToggle = document.getElementById('theme-toggle');
+        const upgradeSection = document.getElementById('upgrade-section');
+        const upgradeItemsContainer = document.getElementById('upgrade-items');
+        const upgradeToggle = document.getElementById('upgrade-toggle');
+        
+        let sessionCatches = 0;
+        let isTouchDevice = false;
+        let touchDetected = false;
+        let spiralButtonActive = false;
+        let spiralButton = null;
+        let spiralTimeout = null;
+        let catchesSinceLastSpiral = 0;
+        let lightningInterval = null;
+        
+        const tauntMessage = document.createElement('div');
+        tauntMessage.className = 'taunt-message';
+        tauntMessage.textContent = "TOO SLOW! TRY AGAIN!";
+        gameContainer.appendChild(tauntMessage);
+        
+        let containerRect = gameContainer.getBoundingClientRect();
+        let containerWidth = containerRect.width;
+        let containerHeight = containerRect.height;
+        
+        const buttonRect = button.getBoundingClientRect();
+        const buttonWidth = buttonRect.width;
+        const buttonHeight = buttonRect.height;
+        
+        function loadGameState() {
+            const savedState = localStorage.getItem('buttonGameState');
+            if (savedState) {
+                try {
+                    const parsed = JSON.parse(savedState);
+                    if (parsed.version === gameState.version) {
+                        Object.assign(gameState, parsed);
+                        updateDisplays();
+                        updateShop();
+                        updateUpgrades();
+                        checkSkinUnlocks();
+                        checkMultiplierUnlocks();
+                        if (gameState.stormThemeUnlocked) {
+                            themeToggle.style.display = 'inline-block';
+                        }
+                        if (gameState.stormThemeActive) {
+                            toggleStormTheme();
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to load game state", e);
+                }
+            }
+            generateSaveCode();
+        }
+        
+        function saveGameState() {
+            localStorage.setItem('buttonGameState', JSON.stringify(gameState));
+            generateSaveCode();
+        }
+        
+        function generateSaveCode() {
+            const stateString = JSON.stringify(gameState);
+            const code = btoa(stateString);
+            saveCodeDisplay.textContent = code;
+            return code;
+        }
+        
+        function loadFromCode(code) {
+            try {
+                const stateString = atob(code);
+                const parsed = JSON.parse(stateString);
+                if (parsed.version === gameState.version) {
+                    Object.assign(gameState, parsed);
+                    updateDisplays();
+                    updateShop();
+                    updateUpgrades();
+                    checkSkinUnlocks();
+                    checkMultiplierUnlocks();
+                    if (gameState.stormThemeUnlocked) {
+                        themeToggle.style.display = 'inline-block';
+                    }
+                    if (gameState.stormThemeActive) {
+                        toggleStormTheme();
+                    }
+                    saveGameState();
+                    alert("Progress loaded successfully!");
+                    return true;
+                }
+            } catch (e) {
+                console.error("Failed to load from code", e);
+            }
+            alert("Invalid save code!");
+            return false;
+        }
+        
+        function updateDisplays() {
+            totalCatchesDisplay.textContent = gameState.totalCatches;
+            highScoreDisplay.textContent = gameState.highScore;
+            sessionCatchesDisplay.textContent = sessionCatches;
+            multiplierDisplay.textContent = gameState.currentMultiplier + 'x';
+        }
+        
+        function checkSkinUnlocks() {
+            let unlockedNewSkin = false;
+            
+            skins.forEach(skin => {
+                if (skin.requiredCatches && 
+                    gameState.totalCatches >= skin.requiredCatches && 
+                    !gameState.unlockedSkins.includes(skin.id)) {
+                    gameState.unlockedSkins.push(skin.id);
+                    unlockedNewSkin = true;
+                }
+            });
+            
+            if (gameState.totalCatches >= 10 && !gameState.hasSpiralButton) {
+                gameState.hasSpiralButton = true;
+                unlockedNewSkin = true;
+            }
+            
+            if (gameState.totalCatches >= 500 && !gameState.stormThemeUnlocked) {
+                gameState.stormThemeUnlocked = true;
+                themeToggle.style.display = 'inline-block';
+                unlockedNewSkin = true;
+            }
+            
+            if (unlockedNewSkin) {
+                updateShop();
+                saveGameState();
+                if (gameState.hasSpiralButton) {
+                    alert("New feature unlocked: Spiral Button! It will appear every 5 catches after your first 10 catches.");
+                } else if (gameState.stormThemeUnlocked) {
+                    alert("New features unlocked: Tornado skin and Storm theme! Check the shop and theme toggle button!");
+                } else {
+                    alert("New skin unlocked! Check the shop!");
+                }
+            }
+        }
+        
+        function checkMultiplierUnlocks() {
+            let unlockedNewMultiplier = false;
+            
+            multipliers.forEach(mult => {
+                if (gameState.totalCatches >= mult.requiredCatches && 
+                    !gameState.unlockedMultipliers.includes(mult.value)) {
+                    gameState.unlockedMultipliers.push(mult.value);
+                    unlockedNewMultiplier = true;
+                }
+            });
+            
+            if (unlockedNewMultiplier) {
+                updateUpgrades();
+                saveGameState();
+                alert("New multiplier unlocked! Check the upgrades section!");
+            }
+        }
+        
+        function updateShop() {
+            shopItemsContainer.innerHTML = '';
+            
+            skins.forEach(skin => {
+                const isUnlocked = gameState.unlockedSkins.includes(skin.id);
+                const isEquipped = gameState.currentSkin === skin.id;
+                
+                const shopItem = document.createElement('div');
+                shopItem.className = 'shop-item';
+                
+                const preview = document.createElement('div');
+                preview.className = `skin-preview ${skin.previewClass}`;
+                
+                const info = document.createElement('div');
+                info.className = 'skin-info';
+                
+                const name = document.createElement('div');
+                name.className = 'skin-name';
+                name.textContent = skin.name;
+                
+                const desc = document.createElement('div');
+                desc.className = 'skin-requirements';
+                desc.textContent = `${skin.description} (${skin.requirement})`;
+                
+                info.appendChild(name);
+                info.appendChild(desc);
+                
+                const status = document.createElement('div');
+                status.className = `skin-status ${isUnlocked ? 'unlocked' : 'locked'}`;
+                status.textContent = isUnlocked ? 'UNLOCKED' : 'LOCKED';
+                
+                shopItem.appendChild(preview);
+                shopItem.appendChild(info);
+                shopItem.appendChild(status);
+                
+                if (isUnlocked) {
+                    const equipBtn = document.createElement('button');
+                    equipBtn.className = 'equip-btn';
+                    equipBtn.textContent = isEquipped ? 'EQUIPPED' : 'EQUIP';
+                    equipBtn.disabled = isEquipped;
+                    
+                    equipBtn.addEventListener('click', () => {
+                        gameState.currentSkin = skin.id;
+                        applyCurrentSkin();
+                        updateShop();
+                        saveGameState();
+                    });
+                    
+                    shopItem.appendChild(equipBtn);
+                }
+                
+                shopItemsContainer.appendChild(shopItem);
+            });
+        }
+        
+        function updateUpgrades() {
+            upgradeItemsContainer.innerHTML = '';
+            
+            multipliers.forEach(mult => {
+                const isUnlocked = gameState.unlockedMultipliers.includes(mult.value);
+                const isEquipped = gameState.currentMultiplier === mult.value;
+                
+                const upgradeItem = document.createElement('div');
+                upgradeItem.className = 'shop-item';
+                
+                const info = document.createElement('div');
+                info.className = 'skin-info';
+                
+                const name = document.createElement('div');
+                name.className = 'skin-name';
+                name.textContent = mult.name;
+                
+                const desc = document.createElement('div');
+                desc.className = 'skin-requirements';
+                desc.textContent = `${mult.description} (${mult.requirement})`;
+                
+                info.appendChild(name);
+                info.appendChild(desc);
+                
+                const status = document.createElement('div');
+                status.className = `skin-status ${isUnlocked ? 'unlocked' : 'locked'}`;
+                status.textContent = isUnlocked ? 'UNLOCKED' : 'LOCKED';
+                
+                upgradeItem.appendChild(info);
+                upgradeItem.appendChild(status);
+                
+                if (isUnlocked) {
+                    const equipBtn = document.createElement('button');
+                    equipBtn.className = 'equip-btn';
+                    equipBtn.textContent = isEquipped ? 'EQUIPPED' : 'EQUIP';
+                    equipBtn.disabled = isEquipped;
+                    
+                    equipBtn.addEventListener('click', () => {
+                        gameState.currentMultiplier = mult.value;
+                        updateDisplays();
+                        updateUpgrades();
+                        saveGameState();
+                    });
+                    
+                    upgradeItem.appendChild(equipBtn);
+                }
+                
+                upgradeItemsContainer.appendChild(upgradeItem);
+            });
+        }
+        
+        function applyCurrentSkin() {
+            button.className = '';
+            button.classList.add(gameState.currentSkin + '-skin');
+        }
+        
+        function moveButton() {
+            const maxX = containerWidth - buttonWidth - 20;
+            const maxY = containerHeight - buttonHeight - 20;
+            
+            const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+            
+            button.style.left = `${randomX}px`;
+            button.style.top = `${randomY}px`;
+            
+            tauntMessage.style.left = `${randomX + buttonWidth/2 - tauntMessage.offsetWidth/2}px`;
+            tauntMessage.style.top = `${randomY - 30}px`;
+            tauntMessage.classList.add('visible');
+            
+            setTimeout(() => {
+                tauntMessage.classList.remove('visible');
+            }, 1000);
+        }
+        
+        function createSpiralButton() {
+            if (spiralButton) return;
+            
+            spiralButton = document.createElement('button');
+            spiralButton.className = 'spiral-button';
+            spiralButton.textContent = 'SPIRAL BONUS!';
+            spiralButton.style.position = 'absolute';
+            spiralButton.style.padding = '15px 30px';
+            spiralButton.style.fontSize = '18px';
+            spiralButton.style.color = 'white';
+            spiralButton.style.border = 'none';
+            spiralButton.style.cursor = 'pointer';
+            spiralButton.style.transition = 'all 0.3s';
+            spiralButton.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            spiralButton.style.userSelect = 'none';
+            spiralButton.style.zIndex = '5';
+            
+            const maxX = containerWidth - buttonWidth - 20;
+            const maxY = containerHeight - buttonHeight - 20;
+            
+            const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+            
+            spiralButton.style.left = `${randomX}px`;
+            spiralButton.style.top = `${randomY}px`;
+            
+            spiralButton.addEventListener('click', catchSpiralButton);
+            
+            gameContainer.appendChild(spiralButton);
+            
+            spiralTimeout = setTimeout(() => {
+                removeSpiralButton();
+            }, 5000);
+        }
+        
+        function removeSpiralButton() {
+            if (spiralButton) {
+                spiralButton.removeEventListener('click', catchSpiralButton);
+                gameContainer.removeChild(spiralButton);
+                spiralButton = null;
+                spiralButtonActive = false;
+                if (spiralTimeout) {
+                    clearTimeout(spiralTimeout);
+                    spiralTimeout = null;
+                }
+            }
+        }
+        
+        function catchSpiralButton() {
+            if (!spiralButtonActive) return;
+            
+            removeSpiralButton();
+            
+            const bonus = 5 * gameState.currentMultiplier;
+            sessionCatches += bonus;
+            gameState.totalCatches += bonus;
+            
+            if (sessionCatches > gameState.highScore) {
+                gameState.highScore = sessionCatches;
+            }
+            
+            updateDisplays();
+            checkSkinUnlocks();
+            checkMultiplierUnlocks();
+            saveGameState();
+            
+            showMultiplierEffect(bonus);
+            alert(`+${bonus} catches from Spiral Button!`);
+        }
+        
+        function checkSpiralButton() {
+            if (gameState.hasSpiralButton && !spiralButtonActive) {
+                catchesSinceLastSpiral++;
+                
+                if (catchesSinceLastSpiral >= 5) {
+                    catchesSinceLastSpiral = 0;
+                    spiralButtonActive = true;
+                    createSpiralButton();
+                }
+            }
+        }
+        
+        function toggleStormTheme() {
+            gameState.stormThemeActive = !gameState.stormThemeActive;
+            
+            if (gameState.stormThemeActive) {
+                document.body.classList.add('storm-theme');
+                startLightning();
+            } else {
+                document.body.classList.remove('storm-theme');
+                stopLightning();
+            }
+            
+            saveGameState();
+        }
+        
+        function startLightning() {
+            if (lightningInterval) clearInterval(lightningInterval);
+            
+            const lightning = document.createElement('div');
+            lightning.className = 'lightning';
+            document.body.appendChild(lightning);
+            
+            lightningInterval = setInterval(() => {
+                const lightning = document.createElement('div');
+                lightning.className = 'lightning';
+                document.body.appendChild(lightning);
+                
+                setTimeout(() => {
+                    if (lightning.parentNode) {
+                        lightning.remove();
+                    }
+                }, 2000);
+            }, 1500);
+        }
+        
+        function stopLightning() {
+            if (lightningInterval) {
+                clearInterval(lightningInterval);
+                lightningInterval = null;
+            }
+            document.querySelectorAll('.lightning').forEach(el => el.remove());
+        }
+        
+        function showMultiplierEffect(amount) {
+            const effect = document.createElement('div');
+            effect.className = 'multiplier-display';
+            effect.textContent = `+${amount}`;
+            effect.style.left = `${button.offsetLeft + button.offsetWidth/2 - effect.offsetWidth/2}px`;
+            effect.style.top = `${button.offsetTop}px`;
+            gameContainer.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.remove();
+            }, 1000);
+        }
+        
+        moveButton();
+        
+        function handleFirstTouch() {
+            if (touchDetected) return;
+            
+            touchDetected = true;
+            isTouchDevice = true;
+            touchWarning.style.display = 'flex';
+            
+            button.removeEventListener('mouseover', mouseOverHandler);
+            button.removeEventListener('click', clickHandler);
+            
+            document.removeEventListener('touchstart', handleFirstTouch);
+        }
+        
+        function mouseOverHandler() {
+            moveButton();
+        }
+        
+        function clickHandler() {
+            if (!isTouchDevice) {
+                const catchAmount = gameState.currentMultiplier;
+                sessionCatches += catchAmount;
+                gameState.totalCatches += catchAmount;
+                catchesSinceLastSpiral++;
+                
+                if (sessionCatches > gameState.highScore) {
+                    gameState.highScore = sessionCatches;
+                }
+                
+                updateDisplays();
+                checkSkinUnlocks();
+                checkMultiplierUnlocks();
+                checkSpiralButton();
+                saveGameState();
+                showMultiplierEffect(catchAmount);
+                moveButton();
+            }
+        }
+        
+        shopToggle.addEventListener('click', () => {
+            if (shopSection.style.display === 'none') {
+                shopSection.style.display = 'block';
+                shopToggle.textContent = 'Hide Skin Shop';
+                upgradeSection.style.display = 'none';
+                upgradeToggle.textContent = 'Show Upgrades';
+            } else {
+                shopSection.style.display = 'none';
+                shopToggle.textContent = 'Show Skin Shop';
+            }
+        });
+        
+        upgradeToggle.addEventListener('click', () => {
+            if (upgradeSection.style.display === 'none') {
+                upgradeSection.style.display = 'block';
+                upgradeToggle.textContent = 'Hide Upgrades';
+                shopSection.style.display = 'none';
+                shopToggle.textContent = 'Show Skin Shop';
+            } else {
+                upgradeSection.style.display = 'none';
+                upgradeToggle.textContent = 'Show Upgrades';
+            }
+        });
+        
+        themeToggle.addEventListener('click', toggleStormTheme);
+        
+        button.addEventListener('mouseover', mouseOverHandler);
+        button.addEventListener('click', clickHandler);
+        document.addEventListener('touchstart', handleFirstTouch, { passive: true });
+        
+        copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(generateSaveCode())
+                .then(() => alert("Save code copied to clipboard!"))
+                .catch(() => alert("Failed to copy save code"));
+        });
+        
+        loadButton.addEventListener('click', () => {
+            loadInput.style.display = 'inline-block';
+            confirmLoad.style.display = 'inline-block';
+            loadButton.style.display = 'none';
+        });
+        
+        confirmLoad.addEventListener('click', () => {
+            if (loadFromCode(loadInput.value.trim())) {
+                loadInput.style.display = 'none';
+                confirmLoad.style.display = 'none';
+                loadButton.style.display = 'inline-block';
+                loadInput.value = '';
+            }
+        });
+        
+        window.addEventListener('resize', () => {
+            containerRect = gameContainer.getBoundingClientRect();
+            containerWidth = containerRect.width;
+            containerHeight = containerRect.height;
+            
+            const currentLeft = parseInt(button.style.left) || 0;
+            const currentTop = parseInt(button.style.top) || 0;
+            
+            const maxX = containerWidth - buttonWidth;
+            const maxY = containerHeight - buttonHeight;
+            
+            if (currentLeft > maxX) button.style.left = `${maxX}px`;
+            if (currentTop > maxY) button.style.top = `${maxY}px`;
+        });
+        
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+        
+        loadGameState();
+        applyCurrentSkin();
+        updateShop();
+        updateUpgrades();
+    </script>
+</body>
+</html>
